@@ -24,5 +24,47 @@ Create a pipeline with below shown jobs
 Runt the pipeline and see the youtube application is deployed.
 
 
+# alternatively you can use the below yaml code 
+
+
+
+      trigger: none
+      
+      name: Deploy-Bicep-Code-via-Pipeline
+      
+      pool: Azure Pipelines
+      
+      jobs:
+      - job: Job_1
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - checkout: self
+          clean: true
+          fetchTags: false
+        - task: Npm@1
+          displayName: npm install
+          inputs:
+            verbose: false
+        - task: Npm@1
+          displayName: npm build
+          inputs:
+            command: custom
+            verbose: false
+            customCommand: run build
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: build
+        - task: AzureRmWebAppDeployment@4
+          displayName: 'Azure App Service Deploy: day4youtube'
+          inputs:
+            ConnectedServiceName: 13a58610-b8ec-45b5-82fb-3aed7e81735f
+            WebAppKind: webAppLinux
+            WebAppName: day4youtube
+            Package: $(System.DefaultWorkingDirectory)/build
+            RuntimeStack: STATICSITE|1.0
+
 
 
